@@ -1,0 +1,127 @@
+---
+title: "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray"
+author: "Min Sothearith"
+date: "2025-03-15"
+categories: [Climate Data]
+image: "image.webp"
+---
+## **Introduction to Climate Data**
+
+With the evolution of computational technology, climate studies have greatly benefited from these advancements. In the past, analyzing climate data could take hours, days, or even weeks due to the sheer size of the datasets and limited computational resources. Technology advancements have made this procedure faster and more efficient. The emergence of powerful computing equipment and adaptable programming languages such as Python has greatly reduced computation times, making climate data analysis more accessible and efficient.
+
+Climate data is often released in the form of NetCDF (Network Common Data Form) files, a widely-used format in climate science for storing large, multidimensional datasets. For example, reanalysis datasets like ERA5, produced by the [European Centre for Medium-Range Weather Forecasts (ECMWF)](https://www.ecmwf.int/), are distributed in NetCDF format. Similarly, future climate projections from the [Coupled Model Intercomparison Project Phase 6 (CMIP6)](https://pcmdi.llnl.gov/CMIP6/) are also provided as NetCDF files.
+
+NetCDF files are designed with a structure that allows the storage of multiple variables (e.g., temperature, precipitation, humidity), each of which can have several dimensions — typically time, latitude, longitude and pressure level. This structure is highly efficient for managing large datasets, as it allows for easy access to specific variables or subsets of the data. Figure 1 below illustrates a typical NetCDF file structure, showing how variables like temperature and precipitation are organized along the axes of time, latitude, and longitude.
+
+![Figure 1: Simple structure of NetCDF file](Fig1.webp)
+
+## **Reading NetCDF files with Python**
+
+Numerous libraries are available for reading NetCDF files, but xarray stands out as the most popular choice. It provides a wide array of functions for manipulating climate data efficiently. Thanks to its integration with NumPy and Pandas, xarray offers considerable speed and flexibility, making it an essential tool for climate data analysis in Python.
+
+In this example, I will demonstrate using output files from a [Global Circulation Model (GCM)](https://en.wikipedia.org/wiki/General_circulation_model). Specifically, I will show the precipitation output from the [ACCESS-CM2](https://research.csiro.au/access/about/cm2/) model, covering the period from *2015* to *2151* under the *SSP5–8.5* scenario.
+
+To get started, we need to ensure that [xarray](https://docs.xarray.dev/en/stable/) is installed on our system. In this example, I will show in a [Jupyter Notebook](https://jupyter.org/) environment.
+
+```{python}
+#| eval: false
+!pip install xarray
+```
+
+Once installed, we can import the library just like any other Python library.
+
+```{python}
+#| eval: false
+import xarray as xr
+```
+
+NetCDF files can be read individually or all at once using functions provided by xarray.
+
+To read NetCDF files individually, we can use the following script:
+
+```{python}
+#| eval: false
+ds = xr.open_dataset("file_directory\pr_day_ACCESS-CM2_ssp585_r1i1p1f1_gn_20150101-20641231.nc")
+```
+
+However, some outputs may be provided in separate files corresponding to specific periods. While we can read them all at once, it’s important that these files are stored in the same folder.
+```{python}
+#| eval: false
+ds = xr.open_mfdataset("folder_directory\*.nc")
+```
+
+The overview of the file that we read is shown in Figure 2.
+
+![Figure 2: Overview of NetCDF file read by xarray](Fig2.webp)
+
+Referring to **Figure 2**, we can observe that this dataset encompasses *49,673* days, covering the period from ***January 1, 2015***, to ***December 31, 2150***. It includes a total of *14,976* grids, represented by a grid structure of *144 latitude* and *192 longitude* points. The precipitation data is indicated by the variable **pr**.
+
+## **Simple Data Manipulation**
+
+### Data Selection
+
+Let’s get started with a simple manipulation. If we need data for a specific period (let’s say from 2015 to 2020 in this example), we can easily select it from the file using the following script:
+
+```{python}
+#| eval: false
+d15_20 = ds.sel(time = slice("2015", "2020"))
+```
+
+The script above allows us to select data from January 1, 2015, to December 31, 2020. However, if we need data for specific dates, we can easily achieve this by adding the desired dates in the format “yyyy-mm-dd”.
+
+```{python}
+#| eval: false
+d15_20 = ds.sel(time = slice("2015-01-01", "2020-12-31"))
+```
+
+It’s not just time that we can filter; this approach can be applied to all dimensions. For example, if we need data for a specific grid (a pair of latitude (-89.375) and longitude (0.9375) coordinates), we can also use the .sel() function to extract that information.
+
+```{python}
+#| eval: false
+ds_latlon = ds.sel(lat = -89.375, lon = 0.9375)
+```
+
+## Simple Calculations: Mean, Min, Max, and Conversion to DataFrame
+
+In climate studies, particularly those related to precipitation, several common indices are used to gain insights from the data. For each grid, we can calculate indices such as the maximum daily precipitation (Rx1day), minimum daily precipitation (Rn1day), and the mean precipitation using functions provided by xarray. These calculations can be separated into individual datasets for easier analysis.
+
+For Rx1day, we can obtain it by:
+
+```{python}
+#| eval: false
+ds['time'] = ds['time'].dt.year
+
+rx1day = ds.groupby('time').max(dim='time')
+```
+
+Rn1day:
+
+```{python}
+#| eval: false
+rn1day = ds.groupby('time').min(dim='time')
+```
+
+Mean:
+
+```{python}
+#| eval: false
+mean_pr = ds.groupby('time').mean(dim='time')
+```
+
+These datasets are summarized in Figure 3.
+
+![Figure 3: Overview of selected Rx1day ds](Fig3.webp)
+
+### Converting to Pandas DataFrame
+
+The Pandas DataFrame (hereafter referred to as *df*) is one of the most powerful tools for data analysis, offering numerous functions to manipulate and visualize data effectively. However, it is not recommended to convert large datasets into a DataFrame, as this can consume a significant amount of memory.
+
+To convert a ds into a Pandas DataFrame df, we can simply use the *.to_dataframe()* function provided by xarray.
+
+
+```{python}
+#| eval: false
+rx1day_df = rx1day.to_dataframe()
+```
+
+![Figure 4: Overview of rx1day_df](Fig4.webp)
