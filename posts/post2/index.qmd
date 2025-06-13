@@ -3,7 +3,7 @@ title: " Mapping Forest Cover in Cambodia (2023)"
 author: "Min Sothearith"
 date: "2025-06-13"
 categories: [Data Viz]
-image: "image.webp"
+image: "image.jpg"
 ---
 ## **🌳 Why Do Forests Matter?**
 
