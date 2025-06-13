@@ -1,0 +1,84 @@
+---
+title: " Mapping Forest Cover in Cambodia (2023)"
+author: "Min Sothearith"
+date: "2025-06-13"
+categories: [Data Viz]
+image: "image.jpg"
+---
+## **🌳 Why Do Forests Matter?**
+
+Forests are more than just trees — they are essential ecosystems that:
+
+ - **Store carbon**, helping combat climate change
+
+ - **Regulate water cycles**, preventing floods and droughts
+
+ - **Support biodiversity**, home to countless species
+
+ - **Provide livelihoods**, especially for rural and Indigenous communities
+
+Understanding where forests are growing or shrinking is crucial for tackling environmental challenges at both local and global scales.
+
+## **🛰️ Why Map Forests?**
+
+Mapping forest cover helps us:
+
+ - Monitor deforestation and degradation
+
+ - Assess the effectiveness of conservation policies
+
+ - Identify hotspots of land-use change
+
+ - Support sustainable land management
+
+## **📍 Case Study: Cambodia**
+
+Cambodia is an important example due to:
+
+ - Its large tropical forest reserves
+
+ - Ongoing threats from logging, agriculture, and infrastructure
+
+ - The ecological and cultural value of its forest landscapes
+
+## **🔍 What I Did**
+
+Using satellite data and public sources, I mapped:
+
+ - Forest cover density across Cambodia in 2023
+
+ - Trends in forest cover change from 2015 to 2022
+
+Data Source: [Open Development Cambodia](https://opendevelopmentcambodia.net/)
+
+## **🗺️ Forest Cover in 2023**
+
+![](Post1_Enviroviz.jpeg)
+
+
+The map (left) shows how forest density varies across Cambodia:
+
+ - Dark green = dense forest
+
+ - White/light areas = sparse or no forest
+
+The graph (right) shows the decline in national forest cover from **43.1% **in 2015 to under **40%** by **2021**, with a slight increase in 2022.
+
+## **📊 Key Insights**
+
+ - Forest cover in Cambodia has steadily declined over the past decade
+
+ - Protected areas in the southwest remain most intact
+
+ - 2022 saw a slight increase — possibly linked to reforestation or improved monitoring
+
+## **📚 What’s Next?**
+
+To better protect Cambodia’s forests, future analysis should:
+
+ - Identify deforestation hotspots
+
+ - Track changes in protected areas
+
+ - Link land cover trends to policy and development activity
+

@@ -1,0 +1,184 @@
+[
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "",
+    "text": "With the evolution of computational technology, climate studies have greatly benefited from these advancements. In the past, analyzing climate data could take hours, days, or even weeks due to the sheer size of the datasets and limited computational resources. Technology advancements have made this procedure faster and more efficient. The emergence of powerful computing equipment and adaptable programming languages such as Python has greatly reduced computation times, making climate data analysis more accessible and efficient.\nClimate data is often released in the form of NetCDF (Network Common Data Form) files, a widely-used format in climate science for storing large, multidimensional datasets. For example, reanalysis datasets like ERA5, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), are distributed in NetCDF format. Similarly, future climate projections from the Coupled Model Intercomparison Project Phase 6 (CMIP6) are also provided as NetCDF files.\nNetCDF files are designed with a structure that allows the storage of multiple variables (e.g., temperature, precipitation, humidity), each of which can have several dimensions — typically time, latitude, longitude and pressure level. This structure is highly efficient for managing large datasets, as it allows for easy access to specific variables or subsets of the data. Figure 1 below illustrates a typical NetCDF file structure, showing how variables like temperature and precipitation are organized along the axes of time, latitude, and longitude.\n\n\n\nFigure 1: Simple structure of NetCDF file"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#introduction-to-climate-data",
+    "href": "posts/post-with-code/index.html#introduction-to-climate-data",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "",
+    "text": "With the evolution of computational technology, climate studies have greatly benefited from these advancements. In the past, analyzing climate data could take hours, days, or even weeks due to the sheer size of the datasets and limited computational resources. Technology advancements have made this procedure faster and more efficient. The emergence of powerful computing equipment and adaptable programming languages such as Python has greatly reduced computation times, making climate data analysis more accessible and efficient.\nClimate data is often released in the form of NetCDF (Network Common Data Form) files, a widely-used format in climate science for storing large, multidimensional datasets. For example, reanalysis datasets like ERA5, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), are distributed in NetCDF format. Similarly, future climate projections from the Coupled Model Intercomparison Project Phase 6 (CMIP6) are also provided as NetCDF files.\nNetCDF files are designed with a structure that allows the storage of multiple variables (e.g., temperature, precipitation, humidity), each of which can have several dimensions — typically time, latitude, longitude and pressure level. This structure is highly efficient for managing large datasets, as it allows for easy access to specific variables or subsets of the data. Figure 1 below illustrates a typical NetCDF file structure, showing how variables like temperature and precipitation are organized along the axes of time, latitude, and longitude.\n\n\n\nFigure 1: Simple structure of NetCDF file"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#reading-netcdf-files-with-python",
+    "href": "posts/post-with-code/index.html#reading-netcdf-files-with-python",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "Reading NetCDF files with Python",
+    "text": "Reading NetCDF files with Python\nNumerous libraries are available for reading NetCDF files, but xarray stands out as the most popular choice. It provides a wide array of functions for manipulating climate data efficiently. Thanks to its integration with NumPy and Pandas, xarray offers considerable speed and flexibility, making it an essential tool for climate data analysis in Python.\nIn this example, I will demonstrate using output files from a Global Circulation Model (GCM). Specifically, I will show the precipitation output from the ACCESS-CM2 model, covering the period from 2015 to 2151 under the SSP5–8.5 scenario.\nTo get started, we need to ensure that xarray is installed on our system. In this example, I will show in a Jupyter Notebook environment.\n\n!pip install xarray\n\nOnce installed, we can import the library just like any other Python library.\n\nimport xarray as xr\n\nNetCDF files can be read individually or all at once using functions provided by xarray.\nTo read NetCDF files individually, we can use the following script:\n\nds = xr.open_dataset(\"file_directory\\pr_day_ACCESS-CM2_ssp585_r1i1p1f1_gn_20150101-20641231.nc\")\n\nHowever, some outputs may be provided in separate files corresponding to specific periods. While we can read them all at once, it’s important that these files are stored in the same folder.\n\nds = xr.open_mfdataset(\"folder_directory\\*.nc\")\n\nThe overview of the file that we read is shown in Figure 2.\n\n\n\nFigure 2: Overview of NetCDF file read by xarray\n\n\nReferring to Figure 2, we can observe that this dataset encompasses 49,673 days, covering the period from January 1, 2015, to December 31, 2150. It includes a total of 14,976 grids, represented by a grid structure of 144 latitude and 192 longitude points. The precipitation data is indicated by the variable pr."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#simple-data-manipulation",
+    "href": "posts/post-with-code/index.html#simple-data-manipulation",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "Simple Data Manipulation",
+    "text": "Simple Data Manipulation\n\nData Selection\nLet’s get started with a simple manipulation. If we need data for a specific period (let’s say from 2015 to 2020 in this example), we can easily select it from the file using the following script:\n\nd15_20 = ds.sel(time = slice(\"2015\", \"2020\"))\n\nThe script above allows us to select data from January 1, 2015, to December 31, 2020. However, if we need data for specific dates, we can easily achieve this by adding the desired dates in the format “yyyy-mm-dd”.\n\nd15_20 = ds.sel(time = slice(\"2015-01-01\", \"2020-12-31\"))\n\nIt’s not just time that we can filter; this approach can be applied to all dimensions. For example, if we need data for a specific grid (a pair of latitude (-89.375) and longitude (0.9375) coordinates), we can also use the .sel() function to extract that information.\n\nds_latlon = ds.sel(lat = -89.375, lon = 0.9375)"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#simple-calculations-mean-min-max-and-conversion-to-dataframe",
+    "href": "posts/post-with-code/index.html#simple-calculations-mean-min-max-and-conversion-to-dataframe",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "Simple Calculations: Mean, Min, Max, and Conversion to DataFrame",
+    "text": "Simple Calculations: Mean, Min, Max, and Conversion to DataFrame\nIn climate studies, particularly those related to precipitation, several common indices are used to gain insights from the data. For each grid, we can calculate indices such as the maximum daily precipitation (Rx1day), minimum daily precipitation (Rn1day), and the mean precipitation using functions provided by xarray. These calculations can be separated into individual datasets for easier analysis.\nFor Rx1day, we can obtain it by:\n\nds['time'] = ds['time'].dt.year\n\nrx1day = ds.groupby('time').max(dim='time')\n\nRn1day:\n\nrn1day = ds.groupby('time').min(dim='time')\n\nMean:\n\nmean_pr = ds.groupby('time').mean(dim='time')\n\nThese datasets are summarized in Figure 3.\n\n\n\nFigure 3: Overview of selected Rx1day ds\n\n\n\nConverting to Pandas DataFrame\nThe Pandas DataFrame (hereafter referred to as df) is one of the most powerful tools for data analysis, offering numerous functions to manipulate and visualize data effectively. However, it is not recommended to convert large datasets into a DataFrame, as this can consume a significant amount of memory.\nTo convert a ds into a Pandas DataFrame df, we can simply use the .to_dataframe() function provided by xarray.\n\nrx1day_df = rx1day.to_dataframe()\n\n\n\n\nFigure 4: Overview of rx1day_df"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me!",
+    "section": "",
+    "text": "Hello, my name is Min Sothearith, and I am currently pursuing a master’s degree at Kongju National University in South Korea, with a research focus on the uncertainties in global climate models.\nWelcome to my blog! This platform serves as a space where I share data analysis and visualizations created using Python. My goal is to explore and present insights through visual storytelling. Please feel free to explore my work and connect with me through the links below."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to My Data blogs",
+    "section": "",
+    "text": "Mapping Forest Cover in Cambodia (2023)\n\n\n\nData Viz\n\n\n\n\n\n\n\nMin Sothearith\n\n\nJun 13, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nA Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray\n\n\n\nClimate Data\n\n\n\n\n\n\n\nMin Sothearith\n\n\nMar 15, 2025\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/post1/index.html",
+    "href": "posts/post1/index.html",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "",
+    "text": "With the evolution of computational technology, climate studies have greatly benefited from these advancements. In the past, analyzing climate data could take hours, days, or even weeks due to the sheer size of the datasets and limited computational resources. Technology advancements have made this procedure faster and more efficient. The emergence of powerful computing equipment and adaptable programming languages such as Python has greatly reduced computation times, making climate data analysis more accessible and efficient.\nClimate data is often released in the form of NetCDF (Network Common Data Form) files, a widely-used format in climate science for storing large, multidimensional datasets. For example, reanalysis datasets like ERA5, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), are distributed in NetCDF format. Similarly, future climate projections from the Coupled Model Intercomparison Project Phase 6 (CMIP6) are also provided as NetCDF files.\nNetCDF files are designed with a structure that allows the storage of multiple variables (e.g., temperature, precipitation, humidity), each of which can have several dimensions — typically time, latitude, longitude and pressure level. This structure is highly efficient for managing large datasets, as it allows for easy access to specific variables or subsets of the data. Figure 1 below illustrates a typical NetCDF file structure, showing how variables like temperature and precipitation are organized along the axes of time, latitude, and longitude.\n\n\n\nFigure 1: Simple structure of NetCDF file"
+  },
+  {
+    "objectID": "posts/post1/index.html#introduction-to-climate-data",
+    "href": "posts/post1/index.html#introduction-to-climate-data",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "",
+    "text": "With the evolution of computational technology, climate studies have greatly benefited from these advancements. In the past, analyzing climate data could take hours, days, or even weeks due to the sheer size of the datasets and limited computational resources. Technology advancements have made this procedure faster and more efficient. The emergence of powerful computing equipment and adaptable programming languages such as Python has greatly reduced computation times, making climate data analysis more accessible and efficient.\nClimate data is often released in the form of NetCDF (Network Common Data Form) files, a widely-used format in climate science for storing large, multidimensional datasets. For example, reanalysis datasets like ERA5, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), are distributed in NetCDF format. Similarly, future climate projections from the Coupled Model Intercomparison Project Phase 6 (CMIP6) are also provided as NetCDF files.\nNetCDF files are designed with a structure that allows the storage of multiple variables (e.g., temperature, precipitation, humidity), each of which can have several dimensions — typically time, latitude, longitude and pressure level. This structure is highly efficient for managing large datasets, as it allows for easy access to specific variables or subsets of the data. Figure 1 below illustrates a typical NetCDF file structure, showing how variables like temperature and precipitation are organized along the axes of time, latitude, and longitude.\n\n\n\nFigure 1: Simple structure of NetCDF file"
+  },
+  {
+    "objectID": "posts/post1/index.html#reading-netcdf-files-with-python",
+    "href": "posts/post1/index.html#reading-netcdf-files-with-python",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "Reading NetCDF files with Python",
+    "text": "Reading NetCDF files with Python\nNumerous libraries are available for reading NetCDF files, but xarray stands out as the most popular choice. It provides a wide array of functions for manipulating climate data efficiently. Thanks to its integration with NumPy and Pandas, xarray offers considerable speed and flexibility, making it an essential tool for climate data analysis in Python.\nIn this example, I will demonstrate using output files from a Global Circulation Model (GCM). Specifically, I will show the precipitation output from the ACCESS-CM2 model, covering the period from 2015 to 2151 under the SSP5–8.5 scenario.\nTo get started, we need to ensure that xarray is installed on our system. In this example, I will show in a Jupyter Notebook environment.\n\n!pip install xarray\n\nOnce installed, we can import the library just like any other Python library.\n\nimport xarray as xr\n\nNetCDF files can be read individually or all at once using functions provided by xarray.\nTo read NetCDF files individually, we can use the following script:\n\nds = xr.open_dataset(\"file_directory\\pr_day_ACCESS-CM2_ssp585_r1i1p1f1_gn_20150101-20641231.nc\")\n\nHowever, some outputs may be provided in separate files corresponding to specific periods. While we can read them all at once, it’s important that these files are stored in the same folder.\n\nds = xr.open_mfdataset(\"folder_directory\\*.nc\")\n\nThe overview of the file that we read is shown in Figure 2.\n\n\n\nFigure 2: Overview of NetCDF file read by xarray\n\n\nReferring to Figure 2, we can observe that this dataset encompasses 49,673 days, covering the period from January 1, 2015, to December 31, 2150. It includes a total of 14,976 grids, represented by a grid structure of 144 latitude and 192 longitude points. The precipitation data is indicated by the variable pr."
+  },
+  {
+    "objectID": "posts/post1/index.html#simple-data-manipulation",
+    "href": "posts/post1/index.html#simple-data-manipulation",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "Simple Data Manipulation",
+    "text": "Simple Data Manipulation\n\nData Selection\nLet’s get started with a simple manipulation. If we need data for a specific period (let’s say from 2015 to 2020 in this example), we can easily select it from the file using the following script:\n\nd15_20 = ds.sel(time = slice(\"2015\", \"2020\"))\n\nThe script above allows us to select data from January 1, 2015, to December 31, 2020. However, if we need data for specific dates, we can easily achieve this by adding the desired dates in the format “yyyy-mm-dd”.\n\nd15_20 = ds.sel(time = slice(\"2015-01-01\", \"2020-12-31\"))\n\nIt’s not just time that we can filter; this approach can be applied to all dimensions. For example, if we need data for a specific grid (a pair of latitude (-89.375) and longitude (0.9375) coordinates), we can also use the .sel() function to extract that information.\n\nds_latlon = ds.sel(lat = -89.375, lon = 0.9375)"
+  },
+  {
+    "objectID": "posts/post1/index.html#simple-calculations-mean-min-max-and-conversion-to-dataframe",
+    "href": "posts/post1/index.html#simple-calculations-mean-min-max-and-conversion-to-dataframe",
+    "title": "A Beginner’s Guide to Climate Data Analysis with Python: NetCDF, xarray",
+    "section": "Simple Calculations: Mean, Min, Max, and Conversion to DataFrame",
+    "text": "Simple Calculations: Mean, Min, Max, and Conversion to DataFrame\nIn climate studies, particularly those related to precipitation, several common indices are used to gain insights from the data. For each grid, we can calculate indices such as the maximum daily precipitation (Rx1day), minimum daily precipitation (Rn1day), and the mean precipitation using functions provided by xarray. These calculations can be separated into individual datasets for easier analysis.\nFor Rx1day, we can obtain it by:\n\nds['time'] = ds['time'].dt.year\n\nrx1day = ds.groupby('time').max(dim='time')\n\nRn1day:\n\nrn1day = ds.groupby('time').min(dim='time')\n\nMean:\n\nmean_pr = ds.groupby('time').mean(dim='time')\n\nThese datasets are summarized in Figure 3.\n\n\n\nFigure 3: Overview of selected Rx1day ds\n\n\n\nConverting to Pandas DataFrame\nThe Pandas DataFrame (hereafter referred to as df) is one of the most powerful tools for data analysis, offering numerous functions to manipulate and visualize data effectively. However, it is not recommended to convert large datasets into a DataFrame, as this can consume a significant amount of memory.\nTo convert a ds into a Pandas DataFrame df, we can simply use the .to_dataframe() function provided by xarray.\n\nrx1day_df = rx1day.to_dataframe()\n\n\n\n\nFigure 4: Overview of rx1day_df"
+  },
+  {
+    "objectID": "posts/post2/index.html",
+    "href": "posts/post2/index.html",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "",
+    "text": "Forests are more than just trees — they are essential ecosystems that:\n\nStore carbon, helping combat climate change\nRegulate water cycles, preventing floods and droughts\nSupport biodiversity, home to countless species\nProvide livelihoods, especially for rural and Indigenous communities\n\nUnderstanding where forests are growing or shrinking is crucial for tackling environmental challenges at both local and global scales."
+  },
+  {
+    "objectID": "posts/post2/index.html#introduction-to-climate-data",
+    "href": "posts/post2/index.html#introduction-to-climate-data",
+    "title": "How Does Future Heavy Rainfall Look Globally?",
+    "section": "",
+    "text": "With the evolution of computational technology, climate studies have greatly benefited from these advancements. In the past, analyzing climate data could take hours, days, or even weeks due to the sheer size of the datasets and limited computational resources. Technology advancements have made this procedure faster and more efficient. The emergence of powerful computing equipment and adaptable programming languages such as Python has greatly reduced computation times, making climate data analysis more accessible and efficient.\nClimate data is often released in the form of NetCDF (Network Common Data Form) files, a widely-used format in climate science for storing large, multidimensional datasets. For example, reanalysis datasets like ERA5, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), are distributed in NetCDF format. Similarly, future climate projections from the Coupled Model Intercomparison Project Phase 6 (CMIP6) are also provided as NetCDF files.\nNetCDF files are designed with a structure that allows the storage of multiple variables (e.g., temperature, precipitation, humidity), each of which can have several dimensions — typically time, latitude, longitude and pressure level. This structure is highly efficient for managing large datasets, as it allows for easy access to specific variables or subsets of the data. Figure 1 below illustrates a typical NetCDF file structure, showing how variables like temperature and precipitation are organized along the axes of time, latitude, and longitude.\n\n\n\nFigure 1: Simple structure of NetCDF file"
+  },
+  {
+    "objectID": "posts/post2/index.html#reading-netcdf-files-with-python",
+    "href": "posts/post2/index.html#reading-netcdf-files-with-python",
+    "title": "How Does Future Heavy Rainfall Look Globally?",
+    "section": "Reading NetCDF files with Python",
+    "text": "Reading NetCDF files with Python\nNumerous libraries are available for reading NetCDF files, but xarray stands out as the most popular choice. It provides a wide array of functions for manipulating climate data efficiently. Thanks to its integration with NumPy and Pandas, xarray offers considerable speed and flexibility, making it an essential tool for climate data analysis in Python.\nIn this example, I will demonstrate using output files from a Global Circulation Model (GCM). Specifically, I will show the precipitation output from the ACCESS-CM2 model, covering the period from 2015 to 2151 under the SSP5–8.5 scenario.\nTo get started, we need to ensure that xarray is installed on our system. In this example, I will show in a Jupyter Notebook environment.\n\n!pip install xarray\n\nOnce installed, we can import the library just like any other Python library.\n\nimport xarray as xr\n\nNetCDF files can be read individually or all at once using functions provided by xarray.\nTo read NetCDF files individually, we can use the following script:\n\nds = xr.open_dataset(\"file_directory\\pr_day_ACCESS-CM2_ssp585_r1i1p1f1_gn_20150101-20641231.nc\")\n\nHowever, some outputs may be provided in separate files corresponding to specific periods. While we can read them all at once, it’s important that these files are stored in the same folder.\n\nds = xr.open_mfdataset(\"folder_directory\\*.nc\")\n\nThe overview of the file that we read is shown in Figure 2.\n\n\n\nFigure 2: Overview of NetCDF file read by xarray\n\n\nReferring to Figure 2, we can observe that this dataset encompasses 49,673 days, covering the period from January 1, 2015, to December 31, 2150. It includes a total of 14,976 grids, represented by a grid structure of 144 latitude and 192 longitude points. The precipitation data is indicated by the variable pr."
+  },
+  {
+    "objectID": "posts/post2/index.html#simple-data-manipulation",
+    "href": "posts/post2/index.html#simple-data-manipulation",
+    "title": "How Does Future Heavy Rainfall Look Globally?",
+    "section": "Simple Data Manipulation",
+    "text": "Simple Data Manipulation\n\nData Selection\nLet’s get started with a simple manipulation. If we need data for a specific period (let’s say from 2015 to 2020 in this example), we can easily select it from the file using the following script:\n\nd15_20 = ds.sel(time = slice(\"2015\", \"2020\"))\n\nThe script above allows us to select data from January 1, 2015, to December 31, 2020. However, if we need data for specific dates, we can easily achieve this by adding the desired dates in the format “yyyy-mm-dd”.\n\nd15_20 = ds.sel(time = slice(\"2015-01-01\", \"2020-12-31\"))\n\nIt’s not just time that we can filter; this approach can be applied to all dimensions. For example, if we need data for a specific grid (a pair of latitude (-89.375) and longitude (0.9375) coordinates), we can also use the .sel() function to extract that information.\n\nds_latlon = ds.sel(lat = -89.375, lon = 0.9375)"
+  },
+  {
+    "objectID": "posts/post2/index.html#simple-calculations-mean-min-max-and-conversion-to-dataframe",
+    "href": "posts/post2/index.html#simple-calculations-mean-min-max-and-conversion-to-dataframe",
+    "title": "How Does Future Heavy Rainfall Look Globally?",
+    "section": "Simple Calculations: Mean, Min, Max, and Conversion to DataFrame",
+    "text": "Simple Calculations: Mean, Min, Max, and Conversion to DataFrame\nIn climate studies, particularly those related to precipitation, several common indices are used to gain insights from the data. For each grid, we can calculate indices such as the maximum daily precipitation (Rx1day), minimum daily precipitation (Rn1day), and the mean precipitation using functions provided by xarray. These calculations can be separated into individual datasets for easier analysis.\nFor Rx1day, we can obtain it by:\n\nds['time'] = ds['time'].dt.year\n\nrx1day = ds.groupby('time').max(dim='time')\n\nRn1day:\n\nrn1day = ds.groupby('time').min(dim='time')\n\nMean:\n\nmean_pr = ds.groupby('time').mean(dim='time')\n\nThese datasets are summarized in Figure 3.\n\n\n\nFigure 3: Overview of selected Rx1day ds\n\n\n\nConverting to Pandas DataFrame\nThe Pandas DataFrame (hereafter referred to as df) is one of the most powerful tools for data analysis, offering numerous functions to manipulate and visualize data effectively. However, it is not recommended to convert large datasets into a DataFrame, as this can consume a significant amount of memory.\nTo convert a ds into a Pandas DataFrame df, we can simply use the .to_dataframe() function provided by xarray.\n\nrx1day_df = rx1day.to_dataframe()\n\n\n\n\nFigure 4: Overview of rx1day_df"
+  },
+  {
+    "objectID": "posts/post2/index.html#introduction",
+    "href": "posts/post2/index.html#introduction",
+    "title": "How Is Heavy Rainfall Changing in the Future? A Global Look with Climate Models",
+    "section": "",
+    "text": "As our planet warms, rainfall patterns are changing—not just how much it rains, but how intensely. In this blog post, I explore how extreme rainfall events—specifically, the Rx1day (the maximum 1-day precipitation in a year)—are projected to change globally using climate model simulations."
+  },
+  {
+    "objectID": "posts/post2/index.html#what-data-did-i-use",
+    "href": "posts/post2/index.html#what-data-did-i-use",
+    "title": "🌳 Mapping Forest Cover in Cambodia (2023)",
+    "section": "What Data Did I Use?",
+    "text": "What Data Did I Use?\nFor this analysis, I used:\nVariable: Rx1day (maximum 1-day precipitation in a year)\nScenarios:\n\nHistorical (1981–2010)\nFuture (2071–2100) under:\n\nSSP1-2.6 (low emissions)\nSSP2-4.5 (moderate emissions)\nSSP5-8.5 (high emissions)\n\n\nFor each model, I calculated the difference between the future and historical periods, then computed the multi-model average."
+  },
+  {
+    "objectID": "posts/post2/index.html#why-do-forests-matter",
+    "href": "posts/post2/index.html#why-do-forests-matter",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "",
+    "text": "Forests are more than just trees — they are essential ecosystems that:\n\nStore carbon, helping combat climate change\nRegulate water cycles, preventing floods and droughts\nSupport biodiversity, home to countless species\nProvide livelihoods, especially for rural and Indigenous communities\n\nUnderstanding where forests are growing or shrinking is crucial for tackling environmental challenges at both local and global scales."
+  },
+  {
+    "objectID": "posts/post2/index.html#why-map-forests",
+    "href": "posts/post2/index.html#why-map-forests",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "🛰️ Why Map Forests?",
+    "text": "🛰️ Why Map Forests?\nMapping forest cover helps us:\n\nMonitor deforestation and degradation\nAssess the effectiveness of conservation policies\nIdentify hotspots of land-use change\nSupport sustainable land management"
+  },
+  {
+    "objectID": "posts/post2/index.html#case-study-cambodia",
+    "href": "posts/post2/index.html#case-study-cambodia",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "📍 Case Study: Cambodia",
+    "text": "📍 Case Study: Cambodia\nCambodia is an important example due to:\n\nIts large tropical forest reserves\nOngoing threats from logging, agriculture, and infrastructure\nThe ecological and cultural value of its forest landscapes"
+  },
+  {
+    "objectID": "posts/post2/index.html#what-i-did",
+    "href": "posts/post2/index.html#what-i-did",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "🔍 What I Did",
+    "text": "🔍 What I Did\nUsing satellite data and public sources, I mapped:\n\nForest cover density across Cambodia in 2023\nTrends in forest cover change from 2015 to 2022\n\nData Source: Open Development Cambodia"
+  },
+  {
+    "objectID": "posts/post2/index.html#forest-cover-in-2023",
+    "href": "posts/post2/index.html#forest-cover-in-2023",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "🗺️ Forest Cover in 2023",
+    "text": "🗺️ Forest Cover in 2023\n\nThe map (left) shows how forest density varies across Cambodia:\n\nDark green = dense forest\nWhite/light areas = sparse or no forest\n\nThe graph (right) shows the decline in national forest cover from 43.1% in 2015 to under 40% by 2021, with a slight increase in 2022."
+  },
+  {
+    "objectID": "posts/post2/index.html#key-insights",
+    "href": "posts/post2/index.html#key-insights",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "📊 Key Insights",
+    "text": "📊 Key Insights\n\nForest cover in Cambodia has steadily declined over the past decade\nProtected areas in the southwest remain most intact\n2022 saw a slight increase — possibly linked to reforestation or improved monitoring"
+  },
+  {
+    "objectID": "posts/post2/index.html#whats-next",
+    "href": "posts/post2/index.html#whats-next",
+    "title": "Mapping Forest Cover in Cambodia (2023)",
+    "section": "📚 What’s Next?",
+    "text": "📚 What’s Next?\nTo better protect Cambodia’s forests, future analysis should:\n\nIdentify deforestation hotspots\nTrack changes in protected areas\nLink land cover trends to policy and development activity"
+  }
+]
